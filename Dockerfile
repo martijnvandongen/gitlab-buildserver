@@ -2,11 +2,11 @@
 
 FROM ubuntu:latest
 
-ENV TERRAFORM_VERSION=0.7.3
-ENV TERRAFORM_SHA256SUM=4e985f222ec99616e8c730d737c9b400f9d73bf0c436661ec888b2406d3a6f39
+ENV TERRAFORM_VERSION=0.7.4
+ENV TERRAFORM_SHA256SUM=8950ab77430d0ec04dc315f0d2d0433421221357b112d44aa33ed53cbf5838f6
 
 RUN apt-get update && apt-get upgrade && \
-	apt-get install -qy git curl python-pip jq unzip groff-base && \
+	apt-get install -qy git curl python-pip jq unzip zip groff-base && \
 	pip install --upgrade pip && \
 	pip install awscli requests && \
 	curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
