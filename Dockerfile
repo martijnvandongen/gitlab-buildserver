@@ -1,14 +1,25 @@
-# https://hub.docker.com/r/hashicorp/terraform/~/dockerfile/
+FROM alpine:latest
 
-FROM ubuntu:latest
+ENV TERRAFORM_VERSION=0.10.0
+ENV TERRAFORM_SHA256SUM=f991039e3822f10d6e05eabf77c9f31f3831149b52ed030775b6ec5195380999
 
-ENV TERRAFORM_VERSION=0.7.4
-ENV TERRAFORM_SHA256SUM=8950ab77430d0ec04dc315f0d2d0433421221357b112d44aa33ed53cbf5838f6
+ENV HUGO_VERSION 0.26
+ENV HUGO_BINARY hugo_${HUGO_VERSION}_Linux-64bit
 
-RUN apt-get update -y && apt-get upgrade -y && \
-	apt-get install -qy git curl python-pip jq unzip zip groff-base && \
-	pip install --upgrade pip && \
-	pip install awscli requests && \
-	curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-	unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin && \
+RUN apk add --update git curl openssh python py-pip python3 py-pygments bash tar jq && \
+	rm -rf /var/cache/apk/* && \
+    curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip > terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    echo "${TERRAFORM_SHA256SUM}  terraform_${TERRAFORM_VERSION}_linux_amd64.zip" > terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
+    sha256sum -cs terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
+    unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /bin && \
     rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+# HUGO
+ADD https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz /tmp
+RUN tar -xf /tmp/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz -C /tmp \
+    && mkdir -p /usr/local/sbin \
+    && mv /tmp/hugo /usr/local/sbin/hugo \
+    && rm -rf /tmp/hugo_${HUGO_VERSION}_linux_amd64
+
+# AWS CLI
+RUN pip install --upgrade awscli s3cmd python-magic setuptools httpie
