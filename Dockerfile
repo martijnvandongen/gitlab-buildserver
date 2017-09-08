@@ -22,4 +22,4 @@ RUN tar -xf /tmp/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz -C /tmp \
     && rm -rf /tmp/hugo_${HUGO_VERSION}_linux_amd64
 
 # AWS CLI
-RUN pip install --upgrade awscli s3cmd python-magic setuptools httpie
+RUN pip install --upgrade awscli s3cmd python-magic setuptools httpie python-frontmatter
